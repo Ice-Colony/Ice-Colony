@@ -765,7 +765,7 @@ contract IceToken is ERC20('IceToken', 'ICE') {
     
     uint256 public transferTaxRate = 500;
     uint256 public constant MAXIMUM_TRANSFER_TAX_RATE = 1500;
-    uint256 public constant MAXIMUM_SUPPLY = 50000000000000000000000;
+    uint256 public constant MAXIMUM_SUPPLY = 65000000000000000000000;
     uint256 public maxTransfer = 300;
     address public developer;
     address public constant BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
@@ -1268,7 +1268,7 @@ contract MasterChef is Ownable, ReentrancyGuard {
     uint256 public constant BONUS_MULTIPLIER = 1;
     uint256 public constant MAXIMUM_HARVEST_INTERVAL = 14 days;
     uint256 public constant MAXIMUM_DEPOSIT_FEE = 500;
-    uint256 public constant MAX_SUPPLY_CAP = 50000000000000000000000;
+    uint256 public constant MAX_SUPPLY_CAP = 65000000000000000000000;
     uint256 public constant MAX_EMISSION_RATE = 500000000000000000;
 
     PoolInfo[] public poolInfo;
@@ -1331,7 +1331,7 @@ contract MasterChef is Ownable, ReentrancyGuard {
         return poolInfo.length;
     }
 
-    function add(uint256 _allocPoint, IERC20 _lpToken, uint16 _depositFeeBP, uint256 _harvestInterval, bool _withUpdate) external onlyOwner {
+    function add(uint256 _allocPoint, IERC20 _lpToken, uint16 _depositFeeBP, uint256 _harvestInterval, bool _withUpdate) external onlyOwner nonDuplicated {
         require(_depositFeeBP <= MAXIMUM_DEPOSIT_FEE, "add: invalid deposit fee basis points");
         require(_harvestInterval <= MAXIMUM_HARVEST_INTERVAL, "add: invalid harvest interval");
         if (_withUpdate) {
