@@ -1366,9 +1366,6 @@ contract MasterChef is Ownable, ReentrancyGuard {
     }
 
     function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
-        if (IERC20(ice).totalSupply() + totalLockedUpRewards  >= MAX_SUPPLY_CAP) {
-            return 0;
-        }
         return _to.sub(_from).mul(BONUS_MULTIPLIER);
     }
 
