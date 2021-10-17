@@ -779,11 +779,9 @@ contract IceToken is ERC20('IceToken', 'ICE') {
     }
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
     function mint(address _to, uint256 _amount) public onlyOwner {
-        if(_amount > 0){
-            require(totalSupply().add(_amount) <= MAXIMUM_SUPPLY, "To much");
-            _mint(_to, _amount);
-            _moveDelegates(address(0), _delegates[_to], _amount);
-        }
+        require(totalSupply().add(_amount) <= MAXIMUM_SUPPLY, "To much");
+        _mint(_to, _amount);
+        _moveDelegates(address(0), _delegates[_to], _amount);
     }
 
     // Copied and modified from YAM code:
@@ -1412,9 +1410,19 @@ contract MasterChef is Ownable, ReentrancyGuard {
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 iceReward = multiplier.mul(icePerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-        ice.mint(devAddress, iceReward.div(10));
-        ice.mint(address(this), iceReward);
-        pool.accIcePerShare = pool.accIcePerShare.add(iceReward.mul(1e18).div(lpSupply));
+
+        if(ice.totalSupply() >= MAX_SUPPLY_CAP) {
+            iceReward = 0;
+        }else if(IERC20(ice).totalSupply().add(iceReward.mul(11).div(10)) >= MAX_SUPPLY_CAP){
+            iceReward = (MAX_SUPPLY_CAP.sub(IERC20(ice).totalSupply()).mul(10).div(11));
+        }
+        
+        if(iceReward > 0){
+            IERC20(ice).mint(devAddress, iceReward.div(10));
+            IERC20(ice).mint(address(this), iceReward);
+
+            pool.accIcePerShare = pool.accIcePerShare.add(iceReward.mul(1e18).div(lpSupply));
+        }
         pool.lastRewardBlock = block.number;
     }
 
